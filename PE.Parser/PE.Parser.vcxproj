@@ -146,6 +146,12 @@
     <ClInclude Include="include\Headers\Directories\TLS.h" />
     <ClInclude Include="include\Headers\Directories\AuxilaryRecord.h" />
     <ClInclude Include="include\headers\CoffHeader.h" />
+    <ClInclude Include="include\Headers\DirectoryOffset.h" />
+    <ClInclude Include="include\Headers\DllCharacteristics.h" />
+    <ClInclude Include="include\Headers\ImageCharacteristics.h" />
+    <ClInclude Include="include\Headers\MachineType.h" />
+    <ClInclude Include="include\Headers\SectionCharacteristics.h" />
+    <ClInclude Include="include\Headers\Subsystem.h" />
     <ClInclude Include="include\Pack.h" />
     <ClInclude Include="include\headers\DosHeader.h" />
     <ClInclude Include="include\headers\OptionalHeader.h" />

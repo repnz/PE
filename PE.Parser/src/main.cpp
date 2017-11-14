@@ -7,9 +7,7 @@
 #include <vector>
 #include <memory>
 #include <Headers/SectionHeader.h>
-
-const uint32_t i386 = 0x14c;
-const uint32_t x64 = 0x8664;
+#include <iostream>
 
 using namespace Headers;
 
@@ -25,7 +23,7 @@ int main()
 	const DosHeader dosHeader = parser.Read<DosHeader>();
 	const PEHeader peHeader = parser.Read<PEHeader>(dosHeader.NewExeHeaderFilePointer);
 	
-	if (peHeader.CoffHeader.Machine != i386)
+	if (peHeader.CoffHeader.Machine != MachineTypes::I386)
 	{
 		return -1;
 	}
@@ -36,6 +34,15 @@ int main()
 	
 	const auto sections = parser.ReadVector<SectionHeader>(peHeader.CoffHeader.NumberOfSections);
 
+	for each (SectionHeader section in sections)
+	{
+		if (section.Characteristics & SectionCharacteristics::MEM_EXECUTE)
+		{
+			std::cout << section.Name << " " << section.VirtualAddress << std::endl;
+		}
+	}
+
+	getchar();
 	return 0;
 }
 

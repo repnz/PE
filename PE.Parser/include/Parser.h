@@ -36,7 +36,9 @@ public:
 };
 
 inline Parser::Parser(std::istream& stream) : _stream(stream)
-{}
+{
+	_stream.exceptions(std::istream::failbit | std::istream::badbit);
+}
 
 
 template <typename T>
@@ -55,7 +57,7 @@ void Parser::Read(T& ptr, const std::strstream::pos_type pos)
 
 template <typename T>
 void Parser::Read(T& ptr, const std::size_t size)
-{
+{	
 	_stream.read(reinterpret_cast<char*>(&ptr), size);
 }
 

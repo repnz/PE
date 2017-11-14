@@ -1,9 +1,19 @@
 #pragma once
 #include <cstdint>
 #include <Pack.h>
+#include <Headers/Subsystem.h>
+#include <Headers/DllCharacteristics.h>
 
 namespace Headers
 {
+
+	typedef uint16_t OptionalHeaderMagicNumber;
+
+	namespace OptionalHeaderMagicNumbers
+	{
+		const OptionalHeaderMagicNumber PE32 = 0x10b;
+		const OptionalHeaderMagicNumber PE64 = 0x20b;
+	}
 
 	PACK(struct DataDirectory
 	{
@@ -13,7 +23,7 @@ namespace Headers
 
 	PACK(struct OptionalHeaderStandardFields64
 	{
-		uint16_t Signature;
+		OptionalHeaderMagicNumber Magic;
 		uint8_t MajorLinkerVersion;
 		uint8_t MinorLinkerVersion;
 		uint32_t SizeOfCode; // code sections
@@ -25,7 +35,7 @@ namespace Headers
 
 	PACK(struct OptionalHeaderStandardFields32
 	{
-		uint16_t Signature;
+		OptionalHeaderMagicNumber Magic;
 		uint8_t MajorLinkerVersion;
 		uint8_t MinorLinkerVersion;
 		uint32_t SizeOfCode; // code sections
@@ -55,8 +65,8 @@ namespace Headers
 		uint32_t SizeOfImage;
 		uint32_t SizeOfHeaders;
 		uint32_t CheckSum;
-		uint16_t Subsystem;
-		uint16_t DllCharacteristics;
+		Subsystem Subsystem;
+		DllCharacteristic DllCharacteristics;
 		PointerSize SizeOfStackReserve;
 		PointerSize SizeOfStackCommit;
 		PointerSize SizeOfHeapReserve;

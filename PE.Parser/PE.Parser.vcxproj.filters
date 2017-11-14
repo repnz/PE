@@ -80,5 +80,23 @@
     <ClInclude Include="include\Headers\SectionHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Headers\MachineType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Headers\ImageCharacteristics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Headers\Subsystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Headers\DllCharacteristics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Headers\DirectoryOffset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Headers\SectionCharacteristics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
