@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
+    <ClCompile Include="src\PEParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,9 +74,6 @@
     <ClInclude Include="include\Headers\Directories\HintNameTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Headers\SectionHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -96,6 +93,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Headers\SectionCharacteristics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PEParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StreamParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

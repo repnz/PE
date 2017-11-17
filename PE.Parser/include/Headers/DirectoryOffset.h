@@ -20,5 +20,27 @@ namespace Headers
 		const uint32_t IAT = 12;//Import Address Table
 		const uint32_t DELAY_IMPORT = 13;//Delay Import table
 		const uint32_t COM_DESCRIPTOR = 14;//	COM descriptor table	
+
+
+		const char* OffsetToName[]
+		{
+			"Export",
+			"Import",
+			"Resource",
+			"Exception",
+			"Security",
+			"BaseReloc",
+			"Debug",
+			"Architecture",
+			"GlobalPtr",
+			"Tls",
+			"LoadConfig",
+			"Bound Import",
+			"Import Address Table",
+			"Delay Import",
+			"Com Descriptor",
+			"Reserved",
+			"Reserved"
+		};
 	}
 }

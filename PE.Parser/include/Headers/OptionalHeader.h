@@ -6,13 +6,12 @@
 
 namespace Headers
 {
-
 	typedef uint16_t OptionalHeaderMagicNumber;
 
 	namespace OptionalHeaderMagicNumbers
 	{
-		const OptionalHeaderMagicNumber PE32 = 0x10b;
-		const OptionalHeaderMagicNumber PE64 = 0x20b;
+		const OptionalHeaderMagicNumber MAGIC_PE32 = 0x10b;
+		const OptionalHeaderMagicNumber MAGIC_PE64 = 0x20b;
 	}
 
 	PACK(struct DataDirectory
@@ -48,7 +47,7 @@ namespace Headers
 	);
 
 
-	PACK(
+#pragma pack(push, 1)
 	template <typename PointerSize>
 	struct NtSpecificHeader
 	{
@@ -74,7 +73,8 @@ namespace Headers
 		uint32_t LoaderFlags; // Obsolete
 		uint32_t NumberofRvaAndSizes;
 	};
-	)
+
+#pragma pack(pop)
 
 	typedef NtSpecificHeader<uint32_t> NtSpecificHeader32;
 	typedef NtSpecificHeader<uint64_t> NtSpecificHeader64;
@@ -85,10 +85,11 @@ namespace Headers
 		NtSpecificHeader32 NtSpecific;
 	});
 
-
+	
 	PACK(struct OptionalHeader64
 	{
 		OptionalHeaderStandardFields64 StandardFields;
 		NtSpecificHeader64 NtSpecific;
 	});
+	
 }

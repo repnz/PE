@@ -20,32 +20,32 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{B9D9EF3A-5D0D-48ED-9246-829F2A4FB482}</ProjectGuid>
-    <RootNamespace>PEParser</RootNamespace>
+    <ProjectGuid>{22CF7468-5EC4-40E6-952B-16D177641549}</ProjectGuid>
+    <RootNamespace>PEDumper</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -85,28 +85,22 @@
     <OutDir>$(SolutionDir)\bin\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
-      <UndefinePreprocessorDefinitions>
-      </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);PE32</PreprocessorDefinitions>
-      <PreprocessToFile>false</PreprocessToFile>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
-      <UndefinePreprocessorDefinitions>
-      </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);PE64</PreprocessorDefinitions>
-      <PreprocessToFile>false</PreprocessToFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\PE.Parser\include;</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>PE64</UndefinePreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\PE.Parser\include;</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>PE32</UndefinePreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -116,11 +110,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
-      <UndefinePreprocessorDefinitions>
-      </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);PE32</PreprocessorDefinitions>
-      <PreprocessToFile>false</PreprocessToFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\PE.Parser\include;</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>PE32</UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -134,11 +125,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
-      <UndefinePreprocessorDefinitions>
-      </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);PE64</PreprocessorDefinitions>
-      <PreprocessToFile>false</PreprocessToFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\PE.Parser\include;</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>PE64</UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -146,36 +134,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\PEParser.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Headers\Coff\CoffLineNumbers.h" />
-    <ClInclude Include="include\Headers\Coff\CoffRelocations.h" />
-    <ClInclude Include="include\Headers\Coff\CoffSymbolTable.h" />
-    <ClInclude Include="include\Headers\Directories\Certificate.h" />
-    <ClInclude Include="include\Headers\Directories\Debug.h" />
-    <ClInclude Include="include\Headers\Directories\DelayLoad.h" />
-    <ClInclude Include="include\Headers\Directories\HintNameTable.h" />
-    <ClInclude Include="include\Headers\Directories\ImportTable.h" />
-    <ClInclude Include="include\Headers\Directories\Relocations.h" />
-    <ClInclude Include="include\Headers\Directories\Resource.h" />
-    <ClInclude Include="include\Headers\Directories\TLS.h" />
-    <ClInclude Include="include\Headers\Directories\AuxilaryRecord.h" />
-    <ClInclude Include="include\headers\CoffHeader.h" />
-    <ClInclude Include="include\Headers\DirectoryOffset.h" />
-    <ClInclude Include="include\Headers\DllCharacteristics.h" />
-    <ClInclude Include="include\Headers\ImageCharacteristics.h" />
-    <ClInclude Include="include\Headers\MachineType.h" />
-    <ClInclude Include="include\Headers\SectionCharacteristics.h" />
-    <ClInclude Include="include\Headers\Subsystem.h" />
-    <ClInclude Include="include\Pack.h" />
-    <ClInclude Include="include\headers\DosHeader.h" />
-    <ClInclude Include="include\headers\OptionalHeader.h" />
-    <ClInclude Include="include\headers\PEHeader.h" />
-    <ClInclude Include="include\Headers\SectionHeader.h" />
-    <ClInclude Include="include\Headers\Directories\ExportTable.h" />
-    <ClInclude Include="include\StreamParser.h" />
-    <ClInclude Include="include\PEParser.h" />
+    <ProjectReference Include="..\PE.Parser\PE.Parser.vcxproj">
+      <Project>{b9d9ef3a-5d0d-48ed-9246-829f2a4fb482}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
