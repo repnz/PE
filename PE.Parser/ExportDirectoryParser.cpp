@@ -106,8 +106,8 @@ void ExportDirectoryParser::Impl::LoadEntries()
 	for (uint32_t i=0; i<_exportTable.NumberOfNamePointers; ++i)
 	{
 		_entries[i].Name = _peParser.ReadStringFromRVA(namePointers[i]);
-		_entries[i].Ordinal = ordinals[i];
-		_entries[i].Address = addresses[ordinals[i] - _exportTable.OrdinalBase + 1];
+		_entries[i].Ordinal = ordinals[i] + _exportTable.OrdinalBase;
+		_entries[i].Address = addresses[ordinals[i]];
 
 		// Forwarded Symbol ->
 		if (_exportSection->IsInSection(_entries[i].Address))

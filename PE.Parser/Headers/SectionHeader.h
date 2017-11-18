@@ -13,7 +13,7 @@ namespace Headers
 			uint32_t PhysicalAddress;
 			uint32_t VirtualSize;
 		} Misc;
-		uint32_t VirtualAddress;
+		uint32_t RVA;
 		uint32_t SizeOfRawData;
 		uint32_t PointerToRawData;
 		uint32_t PointerToRelocations;
@@ -24,12 +24,12 @@ namespace Headers
 
 		bool IsInSection(const uint32_t address) const
 		{
-			return address >= VirtualAddress && address < (VirtualAddress + SizeOfRawData);
+			return address >= RVA && address < (RVA + SizeOfRawData);
 		}
 
 		uint32_t GetFilePointer(const uint32_t rva) const
 		{
-			return rva - VirtualAddress + PointerToRawData;
+			return rva - RVA + PointerToRawData;
 		}
 	});
 }
