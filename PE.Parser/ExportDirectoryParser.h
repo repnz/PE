@@ -7,27 +7,19 @@ struct ExportEntry
 	std::string Name;
 	uint32_t Address;
 	uint16_t Ordinal;
+	std::string ForwardedSymbol;
+
+	bool IsForward() const
+	{
+		return ForwardedSymbol.length() > 0;
+	}
 };
 
 class ExportDirectoryParser
 {
 private:
-	PEParser& _peParser;
-
-	void LoadEntries();
-
-	bool LoadExportDirectoryTable();
-
-	void LoadAddressTable(uint32_t* exportAddresses);
-
-	void LoadNamePointerTable(uint32_t* exportNames);
-
-	void LoadOrdinalTable(uint16_t* exportNames);
-
-	ExportDirectoryTable exportTable;
-	
-	std::vector<ExportEntry> _entries;
-
+	class Impl;
+	std::unique_ptr<Impl> _impl;
 public:
 	explicit ExportDirectoryParser(PEParser& peParser);
 
@@ -36,5 +28,6 @@ public:
 	const ExportDirectoryTable& GetExportDirectoryTable() const;
 
 	const std::vector<ExportEntry>& GetEntries() const;
-	
+
+	~ExportDirectoryParser();
 };

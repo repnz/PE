@@ -20,23 +20,25 @@ void PEParser::Load()
 
 	_sections.resize(_peHeader.CoffHeader.NumberOfSections);
 	_streamParser.ReadVector<SectionHeader>(_sections, _peHeader.CoffHeader.NumberOfSections);
-	_exportDirectory = std::make_unique<ExportDirectoryTable>();
+}
 
-	
+const Headers::SectionHeader& PEParser::GetMatchSection(const uint32_t rva) const
+{
+	for (const SectionHeader& section : _sections)
+	{
+		if (section.IsInSection(rva))
+		{
+			return section;
+		}
+	}
 
+	throw std::exception();
 }
 
 uint32_t PEParser::RVAToFilePointer(const uint32_t rva)
 {
-	for (const SectionHeader& section : _sections)
-	{
-		if (rva >= section.VirtualAddress && rva <= (section.VirtualAddress+section.SizeOfRawData))
-		{
-			return rva - section.VirtualAddress + section.PointerToRawData;
-		}
-	}
-
-	return -1;
+	const SectionHeader& section = GetMatchSection(rva);
+	return section.GetFilePointer(rva);
 }
 
 void PEParser::ReadData(void* ptr, const uint32_t rva, const uint32_t size)
@@ -50,7 +52,7 @@ void PEParser::ReadData(void* ptr, const uint32_t rva, const uint32_t size)
 	);
 }
 
-std::string PEParser::ReadString(uint32_t rva)
+std::string PEParser::ReadStringFromRVA(const uint32_t rva)
 {
 	return _streamParser.ReadString(RVAToFilePointer(rva));
 }
@@ -96,7 +98,7 @@ const Headers::PEHeader& PEParser::GetPEHeader() const
 	return _peHeader;
 }
 
-StreamParser& PEParser::StreamParser()
+StreamParser& PEParser::GetStreamParser()
 {
 	return _streamParser;
 }

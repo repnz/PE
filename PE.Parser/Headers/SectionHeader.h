@@ -21,5 +21,15 @@ namespace Headers
 		uint16_t NumberOfRelocations;
 		uint16_t NumberOfLinenumbers;
 		SectionCharacteristic Characteristics;
+
+		bool IsInSection(const uint32_t address) const
+		{
+			return address >= VirtualAddress && address < (VirtualAddress + SizeOfRawData);
+		}
+
+		uint32_t GetFilePointer(const uint32_t rva) const
+		{
+			return rva - VirtualAddress + PointerToRawData;
+		}
 	});
 }

@@ -93,26 +93,27 @@ void WriteExportEntries(const ExportDirectoryParser& parser, std::ostream& outpu
 	output << std::hex << std::uppercase;
 
 	output << std::left << std::setfill(' ');
-	output << std::setw(35) << "Name";
-	output << std::setw(8) << "Address";
-	output << std::setw(8) << "Ordinal" << std::endl;
-
-	int index = 0;
+	output << std::setw(8) << "Ordinal" << " ";
+	output << std::setw(35) << "Name" << " ";
+	output << std::setw(8) << "Address" << std::endl;
 	
 	for (const ExportEntry& exportEntry : parser.GetEntries())
 	{
 		// Write Export Entry
+		
+		output << std::setw(8) << exportEntry.Ordinal << " ";
 
 		output << std::left << std::setfill(' ');
 		output << std::setw(35) << exportEntry.Name << " ";
 
 		output << std::right << std::setfill('0');
-		output << std::setw(8) << exportEntry.Address << " ";
+		output << std::setw(8) << exportEntry.Address;
 
-		output << std::setw(8) << exportEntry.Ordinal;
+		if (exportEntry.IsForward())
+		{
+			output << " -> " << exportEntry.ForwardedSymbol;
+		}
 		output << std::endl;
-
-		++index;
 	}
 
 	output << std::endl;

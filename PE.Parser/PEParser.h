@@ -24,20 +24,23 @@ private:
 	std::vector<Headers::SectionHeader> _sections;
 	std::vector<std::unique_ptr<uint8_t[]>> _sectionData;
 	
-	std::unique_ptr<ExportDirectoryTable> _exportDirectory;
-
 public:
 	PEParser(std::istream& stream);
+
 	void Load();
+
+	const Headers::SectionHeader& GetMatchSection(const uint32_t rva) const;
 
 	uint32_t RVAToFilePointer(uint32_t rva);
 	
 	void ReadData(void* ptr, uint32_t rva, uint32_t size);
 
-	std::string ReadString(uint32_t rva);
+	std::string ReadStringFromRVA(const uint32_t rva);
 
 	uint8_t* PEParser::GetSectionData(const uint32_t index);
+
 	const std::vector<Headers::DataDirectory>& GetDataDirectories() const;
+	
 	const std::vector<Headers::SectionHeader>& GetSectionHeaders() const;
 	
 	const Headers::DosHeader& GetDosHeader() const;
@@ -46,5 +49,5 @@ public:
 
 	const Headers::PEHeader& GetPEHeader() const;
 
-	StreamParser& StreamParser();
+	StreamParser& GetStreamParser();
 };
