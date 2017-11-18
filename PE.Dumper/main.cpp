@@ -1,23 +1,26 @@
+#include <PE.Parser/Headers/OptionalHeader.h>
+#include <PE.Parser/Headers/SectionHeader.h>
+#include <PE.Parser/Headers/DirectoryOffset.h>
+#include <PE.Parser/PEParser.h>
+#include <PE.Parser/ExportDirectoryParser.h>
+
 #include <fstream>
 #include <string>
-#include <Headers/OptionalHeader.h>
 #include <vector>
-#include <memory>
-#include <Headers/SectionHeader.h>
 #include <iostream>
 #include <iomanip>
-#include <Headers/DirectoryOffset.h>
-#include <PEParser.h>
 
 using namespace Headers;
 
 
-template <typename DirIterator>
-void WriteDataDirectories(DirIterator begin, const DirIterator end, std::ostream& output);
+void WriteDataDirectories(const PEParser& parser, std::ostream& output);
+void WriteSectionHeaders(const PEParser& parser, std::ostream& output);
+void WriteExportEntries(const ExportDirectoryParser& parser, std::ostream& output);
+
 
 int main()
 {
-	const char* fileName = "C:\\Users\\Ori\\Desktop\\f.exe";
+	const char* fileName = "C:\\Windows\\System32\\kernel32.dll";
 
 	std::ifstream peFile;
 	peFile.exceptions(std::istream::failbit | std::istream::badbit);
@@ -25,47 +28,93 @@ int main()
 	
 	PEParser peParser(peFile);
 	peParser.Load();
-
-	auto dirs = peParser.GetDataDirectories();
 	
-	WriteDataDirectories(dirs.cbegin(), dirs.cend(), std::cout);
+	WriteDataDirectories(peParser, std::cout);
 
-	auto sections = peParser.GetSectionHeaders();
+	WriteSectionHeaders(peParser, std::cout);
 
-	for (const auto& sec : sections)
+	ExportDirectoryParser exportsParser(peParser);
+	
+	if (exportsParser.Load())
 	{
-		std::cout << sec.Name << std::endl;
+		WriteExportEntries(exportsParser, std::cout);
 	}
 
 	getchar();
 	return 0;
 }
 
-
-template <typename DirIterator>
-void WriteDataDirectories(DirIterator begin, const DirIterator end,
-	std::ostream& output)
+void WriteDataDirectories(const PEParser& parser, std::ostream& output)
 {
-	const int oldFlags = output.flags();
+	const std::ios_base::fmtflags oldFlags = output.flags();
 
-	std::cout << std::hex << std::uppercase;
-
-	std::cout << std::left << std::setfill(' ') <<
-		std::setw(25) << "Directory" <<
-		std::setw(8) << "RVA" << " " << std::setw(8) << "Size" << std::endl;
-
-	for (int i = 0; begin != end; ++begin, ++i)
+	output << std::hex << std::uppercase;
+	output << std::left << std::setfill(' ');
+	output << std::setw(25) << "Directory" << " ";
+	output << std::setw(8) << "RVA" << " ";
+	output << std::setw(8) << "Size" << std::endl;
+	
+	int index = 0;
+	
+	for (const DataDirectory& directory : parser.GetDataDirectories())
 	{
-		const DataDirectory& directory = *begin;
+		// Write Data Directory Name
+		output << std::left << std::setfill(' ');
+		output << std::setw(25) << DirectoryOffsets::OffsetToName[index];
 
-		std::cout << std::left << std::setfill(' ');
-		std::cout << std::setw(25) << DirectoryOffsets::OffsetToName[i];
+		// Write Directory Info
+		output << std::right << std::setfill('0');
+		output << std::setw(8) << directory.RVA << " ";
+		output << std::setw(8) << directory.Size;
+		output << std::endl;
 
-		std::cout << std::right
-			<< std::setfill('0');
-
-		std::cout << std::setw(8) << directory.RVA << " " << std::setw(8) << directory.Size << std::endl;
+		++index;
 	}
 
+	output << std::endl;
+	output.flags(oldFlags);
+}
+
+
+void WriteSectionHeaders(const PEParser& parser, std::ostream& output)
+{
+	auto sections = parser.GetSectionHeaders();
+
+	for (const SectionHeader& sec : sections)
+	{
+		std::cout << sec.Name << std::endl;
+	}
+}
+
+void WriteExportEntries(const ExportDirectoryParser& parser, std::ostream& output)
+{
+	const std::ios_base::fmtflags oldFlags = output.flags();
+
+	output << std::hex << std::uppercase;
+
+	output << std::left << std::setfill(' ');
+	output << std::setw(35) << "Name";
+	output << std::setw(8) << "Address";
+	output << std::setw(8) << "Ordinal" << std::endl;
+
+	int index = 0;
+	
+	for (const ExportEntry& exportEntry : parser.GetEntries())
+	{
+		// Write Export Entry
+
+		output << std::left << std::setfill(' ');
+		output << std::setw(35) << exportEntry.Name << " ";
+
+		output << std::right << std::setfill('0');
+		output << std::setw(8) << exportEntry.Address << " ";
+
+		output << std::setw(8) << exportEntry.Ordinal;
+		output << std::endl;
+
+		++index;
+	}
+
+	output << std::endl;
 	output.flags(oldFlags);
 }

@@ -90,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);PE32</PreprocessorDefinitions>
@@ -102,7 +102,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);PE64</PreprocessorDefinitions>
@@ -116,7 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);PE32</PreprocessorDefinitions>
@@ -134,7 +134,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);PE64</PreprocessorDefinitions>
@@ -146,36 +146,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\PEParser.cpp" />
+    <ClCompile Include="ExportDirectoryParser.cpp" />
+    <ClCompile Include="PEParser.cpp" />
+    <ClCompile Include="src\StreamParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Headers\Coff\CoffLineNumbers.h" />
-    <ClInclude Include="include\Headers\Coff\CoffRelocations.h" />
-    <ClInclude Include="include\Headers\Coff\CoffSymbolTable.h" />
-    <ClInclude Include="include\Headers\Directories\Certificate.h" />
-    <ClInclude Include="include\Headers\Directories\Debug.h" />
-    <ClInclude Include="include\Headers\Directories\DelayLoad.h" />
-    <ClInclude Include="include\Headers\Directories\HintNameTable.h" />
-    <ClInclude Include="include\Headers\Directories\ImportTable.h" />
-    <ClInclude Include="include\Headers\Directories\Relocations.h" />
-    <ClInclude Include="include\Headers\Directories\Resource.h" />
-    <ClInclude Include="include\Headers\Directories\TLS.h" />
-    <ClInclude Include="include\Headers\Directories\AuxilaryRecord.h" />
-    <ClInclude Include="include\headers\CoffHeader.h" />
-    <ClInclude Include="include\Headers\DirectoryOffset.h" />
-    <ClInclude Include="include\Headers\DllCharacteristics.h" />
-    <ClInclude Include="include\Headers\ImageCharacteristics.h" />
-    <ClInclude Include="include\Headers\MachineType.h" />
-    <ClInclude Include="include\Headers\SectionCharacteristics.h" />
-    <ClInclude Include="include\Headers\Subsystem.h" />
-    <ClInclude Include="include\Pack.h" />
-    <ClInclude Include="include\headers\DosHeader.h" />
-    <ClInclude Include="include\headers\OptionalHeader.h" />
-    <ClInclude Include="include\headers\PEHeader.h" />
-    <ClInclude Include="include\Headers\SectionHeader.h" />
-    <ClInclude Include="include\Headers\Directories\ExportTable.h" />
-    <ClInclude Include="include\StreamParser.h" />
-    <ClInclude Include="include\PEParser.h" />
+    <ClInclude Include="ExportDirectoryParser.h" />
+    <ClInclude Include="Headers\Coff\CoffLineNumbers.h" />
+    <ClInclude Include="Headers\Coff\CoffRelocations.h" />
+    <ClInclude Include="Headers\Coff\CoffSymbolTable.h" />
+    <ClInclude Include="Headers\Directories\Certificate.h" />
+    <ClInclude Include="Headers\Directories\Debug.h" />
+    <ClInclude Include="Headers\Directories\DelayLoad.h" />
+    <ClInclude Include="Headers\Directories\HintNameTable.h" />
+    <ClInclude Include="Headers\Directories\ImportTable.h" />
+    <ClInclude Include="Headers\Directories\Relocations.h" />
+    <ClInclude Include="Headers\Directories\Resource.h" />
+    <ClInclude Include="Headers\Directories\TLS.h" />
+    <ClInclude Include="Headers\Directories\AuxilaryRecord.h" />
+    <ClInclude Include="Headers\CoffHeader.h" />
+    <ClInclude Include="Headers\DirectoryOffset.h" />
+    <ClInclude Include="Headers\DllCharacteristics.h" />
+    <ClInclude Include="Headers\ImageCharacteristics.h" />
+    <ClInclude Include="Headers\MachineType.h" />
+    <ClInclude Include="Headers\SectionCharacteristics.h" />
+    <ClInclude Include="Headers\Subsystem.h" />
+    <ClInclude Include="Pack.h" />
+    <ClInclude Include="Headers\DosHeader.h" />
+    <ClInclude Include="Headers\OptionalHeader.h" />
+    <ClInclude Include="Headers\PEHeader.h" />
+    <ClInclude Include="Headers\SectionHeader.h" />
+    <ClInclude Include="Headers\Directories\ExportTable.h" />
+    <ClInclude Include="StreamParser.h" />
+    <ClInclude Include="PEParser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

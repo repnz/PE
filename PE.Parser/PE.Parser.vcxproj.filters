@@ -15,90 +15,99 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\PEParser.cpp">
+    <ClCompile Include="ExportDirectoryParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PEParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StreamParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\headers\DosHeader.h">
+    <ClInclude Include="Headers\Coff\CoffLineNumbers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\headers\CoffHeader.h">
+    <ClInclude Include="Headers\Coff\CoffRelocations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\headers\OptionalHeader.h">
+    <ClInclude Include="Headers\Coff\CoffSymbolTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\headers\PEHeader.h">
+    <ClInclude Include="Headers\Directories\AuxilaryRecord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\AuxilaryRecord.h">
+    <ClInclude Include="Headers\Directories\Certificate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\ExportTable.h">
+    <ClInclude Include="Headers\Directories\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\TLS.h">
+    <ClInclude Include="Headers\Directories\DelayLoad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\Relocations.h">
+    <ClInclude Include="Headers\Directories\ExportTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\Resource.h">
+    <ClInclude Include="Headers\Directories\HintNameTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\ImportTable.h">
+    <ClInclude Include="Headers\Directories\ImportTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\Certificate.h">
+    <ClInclude Include="Headers\Directories\Relocations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\DelayLoad.h">
+    <ClInclude Include="Headers\Directories\Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\Debug.h">
+    <ClInclude Include="Headers\Directories\TLS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Pack.h">
+    <ClInclude Include="Headers\CoffHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Coff\CoffSymbolTable.h">
+    <ClInclude Include="Headers\DirectoryOffset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Coff\CoffLineNumbers.h">
+    <ClInclude Include="Headers\DllCharacteristics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Coff\CoffRelocations.h">
+    <ClInclude Include="Headers\DosHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Directories\HintNameTable.h">
+    <ClInclude Include="Headers\ImageCharacteristics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\SectionHeader.h">
+    <ClInclude Include="Headers\MachineType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\MachineType.h">
+    <ClInclude Include="Headers\OptionalHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\ImageCharacteristics.h">
+    <ClInclude Include="Headers\PEHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\Subsystem.h">
+    <ClInclude Include="Headers\SectionCharacteristics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\DllCharacteristics.h">
+    <ClInclude Include="Headers\SectionHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\DirectoryOffset.h">
+    <ClInclude Include="Headers\Subsystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Headers\SectionCharacteristics.h">
+    <ClInclude Include="Pack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\PEParser.h">
+    <ClInclude Include="ExportDirectoryParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\StreamParser.h">
+    <ClInclude Include="PEParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

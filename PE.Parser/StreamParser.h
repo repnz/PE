@@ -34,14 +34,7 @@ public:
 	template <typename T>
 	std::vector<T> ReadVector(const std::size_t count, const std::strstream::pos_type pos);
 
-	void Move(const int value)
-	{
-		std::strstream::pos_type pos = _stream.tellg();
-
-		pos += value;
-
-		_stream.seekg(pos);
-	}
+	void Move(const int value);
 
 	template <typename T>
 	void ReadVector(std::vector<T>& v, const std::strstream::pos_type pos, const std::size_t count);
@@ -50,13 +43,12 @@ public:
 	template <typename T>
 	void ReadVector(std::vector<T>& v, const std::size_t count);
 
-
+	std::string ReadString(uint32_t rva_to_file_pointer);
 };
 
 inline StreamParser::StreamParser(std::istream& stream) : _stream(stream)
 {
 }
-
 
 template <typename T>
 void StreamParser::Read(T* ptr, const std::strstream::pos_type pos, const std::size_t size)

@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
-#include <Pack.h>
-#include <Headers/Subsystem.h>
-#include <Headers/DllCharacteristics.h>
+#include <PE.Parser/Pack.h>
+#include <PE.Parser/Headers/Subsystem.h>
+#include <PE.Parser/Headers/DllCharacteristics.h>
 
 namespace Headers
 {

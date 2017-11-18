@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include <Pack.h>
+#include <PE.Parser/Pack.h>
 
 PACK(
 struct AuxilaryFunctionRecord

@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
-#include <Headers/CoffHeader.h>
-#include <Pack.h>
+#include <PE.Parser/Headers/CoffHeader.h>
+#include <PE.Parser/Pack.h>
 
 namespace Headers
 {

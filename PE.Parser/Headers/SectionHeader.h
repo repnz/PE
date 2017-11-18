@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
-#include <Pack.h>
-#include <Headers/SectionCharacteristics.h>
+#include <PE.Parser/Pack.h>
+#include <PE.Parser/Headers/SectionCharacteristics.h>
 
 namespace Headers
 {
