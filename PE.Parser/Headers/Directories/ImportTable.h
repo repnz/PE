@@ -4,11 +4,11 @@
 
 PACK(struct ImportDirectoryTable
 {
-	uint32_t ImportLookupTable;
+	uint32_t ImportLookupTableRVA;
 	uint32_t TimeDateStamp;
 	uint32_t ForwarderChain;
-	uint32_t Name;
-	uint32_t ImportAddressTable;
+	uint32_t NameRVA;
+	uint32_t ImportAddressTableRVA;
 });
 
 PACK(struct ImportLookupTableEntry32
@@ -17,8 +17,7 @@ PACK(struct ImportLookupTableEntry32
 
 	bool IsOrdinal() const { return Value & 0x80000000; }
 
-	uint32_t OrdinalNumber() const { return Value & 0x7FFFFFFF; }
-	uint32_t HintNameTableRVA() const { return Value & 0x7FFFFFFF; }
+	uint32_t ActualValue() const { return Value & 0x7FFFFFFF; }
 });
 
 PACK(struct ImportLookupTableEntry64
@@ -27,6 +26,5 @@ PACK(struct ImportLookupTableEntry64
 
 	bool IsOrdinal() const { return Value & 0x8000000000000000; }
 
-	uint64_t OrdinalNumber() const { return Value & 0x7FFFFFFFFFFFFFFF; }
-	uint64_t HintNameTableRVA() const { return Value & 0x7FFFFFFFFFFFFFFF; }
+	uint64_t ActualValue() const { return Value & 0x7FFFFFFFFFFFFFFF; }
 });

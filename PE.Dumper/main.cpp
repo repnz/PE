@@ -9,14 +9,15 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include "PE.Parser/ImportDirectoryParser.h"
 
 using namespace Headers;
 
 
 void WriteDataDirectories(const PEParser& parser, std::ostream& output);
 void WriteSectionHeaders(const PEParser& parser, std::ostream& output);
-void WriteExportEntries(const ExportDirectoryParser& parser, std::ostream& output);
-
+void WriteExports(const ExportDirectoryParser& parser, std::ostream& output);
+void WriteImports(const ImportDirectoryParser& parser, std::ostream& output);
 
 int main()
 {
@@ -37,7 +38,14 @@ int main()
 	
 	if (exportsParser.Load())
 	{
-		WriteExportEntries(exportsParser, std::cout);
+		//WriteExports(exportsParser, std::cout);
+	}
+
+	ImportDirectoryParser importsParser(peParser);
+
+	if (importsParser.Load())
+	{
+		WriteImports(importsParser, std::cout);
 	}
 
 	getchar();
@@ -86,7 +94,7 @@ void WriteSectionHeaders(const PEParser& parser, std::ostream& output)
 	}
 }
 
-void WriteExportEntries(const ExportDirectoryParser& parser, std::ostream& output)
+void WriteExports(const ExportDirectoryParser& parser, std::ostream& output)
 {
 	const std::ios_base::fmtflags oldFlags = output.flags();
 
@@ -115,6 +123,16 @@ void WriteExportEntries(const ExportDirectoryParser& parser, std::ostream& outpu
 		}
 		output << std::endl;
 	}
+
+	output << std::endl;
+	output.flags(oldFlags);
+}
+
+void WriteImports(const ImportDirectoryParser& parser, std::ostream& output)
+{
+	const std::ios_base::fmtflags oldFlags = output.flags();
+
+	const ImportDirectoryTable& table = parser.GetImportTable();
 
 	output << std::endl;
 	output.flags(oldFlags);
