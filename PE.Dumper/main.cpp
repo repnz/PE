@@ -3,13 +3,14 @@
 #include <PE.Parser/Headers/DirectoryOffset.h>
 #include <PE.Parser/PEParser.h>
 #include <PE.Parser/ExportDirectoryParser.h>
+#include <PE.Parser/ImportDirectoryParser.h>
 
 #include <fstream>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include "PE.Parser/ImportDirectoryParser.h"
+
 
 using namespace Headers;
 
@@ -132,7 +133,10 @@ void WriteImports(const ImportDirectoryParser& parser, std::ostream& output)
 {
 	const std::ios_base::fmtflags oldFlags = output.flags();
 
-	const ImportDirectoryTable& table = parser.GetImportTable();
+	for (const ParsedImportDescriptor& descriptor : parser.GetParsedImportDescriptors())
+	{
+		output << descriptor.dllName << std::endl;
+	}
 
 	output << std::endl;
 	output.flags(oldFlags);

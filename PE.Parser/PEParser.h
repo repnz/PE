@@ -25,7 +25,6 @@ private:
 	std::vector<Headers::DataDirectory> _directories;
 	std::vector<Headers::SectionHeader> _sections;
 	std::vector<std::unique_ptr<uint8_t[]>> _sectionData;
-	const Headers::SectionHeader* ReadDirectoryTable(void* directoryTable, const uint32_t offset, const size_t size);
 
 public:
 	PEParser(std::istream& stream);
@@ -36,8 +35,6 @@ public:
 
 	uint32_t RVAToFilePointer(uint32_t rva);
 	
-	void ReadData(void* ptr, uint32_t rva, uint32_t size);
-
 	std::string ReadStringFromRVA(const uint32_t rva);
 
 	uint8_t* PEParser::GetSectionData(const uint32_t index);
@@ -56,15 +53,11 @@ public:
 
 	const Headers::DataDirectory& GetDirectory(const uint32_t offset) const;
 
+	void ReadData(void* ptr, uint32_t rva, uint32_t size);
+
 	template <typename T>
 	void ReadData(T* ptr, const uint32_t rva)
 	{
 		ReadData(ptr, rva, sizeof(T));
-	}
-
-	template <typename T>
-	const Headers::SectionHeader* ReadDirectoryTable(T* directoryTable, const uint32_t offset)
-	{
-		return ReadDirectoryTable(directoryTable, offset, sizeof(T));
 	}
 };

@@ -33,6 +33,11 @@ std::string StreamParser::ReadString(const uint32_t pos)
 	return str;
 }
 
+void StreamParser::Seek(const uint32_t filePointer)
+{
+	_stream.seekg(filePointer);
+}
+
 void StreamParser::Move(const int value)
 {
 	std::strstream::pos_type pos = _stream.tellg();

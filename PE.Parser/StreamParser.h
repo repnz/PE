@@ -43,7 +43,9 @@ public:
 	template <typename T>
 	void ReadVector(std::vector<T>& v, const std::size_t count);
 
-	std::string ReadString(uint32_t rva_to_file_pointer);
+	std::string ReadString(uint32_t filePointer);
+	
+	void Seek(const uint32_t filePointer);
 };
 
 inline StreamParser::StreamParser(std::istream& stream) : _stream(stream)

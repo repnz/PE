@@ -1,17 +1,21 @@
 #include <PE.Parser/ImportDirectoryParser.h>
-#include "Headers/Directories/ImportTable.h"
-#include "Headers/DirectoryOffset.h"
+#include <PE.Parser/Headers/Directories/ImportDirectory.h>
+#include <PE.Parser/Headers/DirectoryOffset.h>
 
 using namespace Headers;
 
 class ImportDirectoryParser::Impl
 {
+private:
+	void LoadImportDescriptors(const uint32_t rva);
 public:
 	PEParser& _parser;
-	ImportDirectoryTable _importTable;
+	std::vector<ParsedImportDescriptor> _parsedDescriptors;
+	std::vector<ImportDescriptor> _descriptors;
 	const SectionHeader* _importSection;
-
 	Impl(PEParser& parser);
+
+	void ParseImportDescriptors();
 	bool Load();
 };
 
@@ -25,11 +29,16 @@ bool ImportDirectoryParser::Load()
 	return _impl->Load();
 }
 
-
-const ImportDirectoryTable& ImportDirectoryParser::GetImportTable() const
+const std::vector<ImportDescriptor>& ImportDirectoryParser::GetImportDescriptors() const
 {
-	return _impl->_importTable;
+	return _impl->_descriptors;
 }
+
+const std::vector<ParsedImportDescriptor>& ImportDirectoryParser::GetParsedImportDescriptors() const
+{
+	return _impl->_parsedDescriptors;
+}
+
 
 ImportDirectoryParser::~ImportDirectoryParser() = default;
 
@@ -37,12 +46,50 @@ ImportDirectoryParser::Impl::Impl(PEParser& parser) : _parser(parser), _importSe
 {
 }
 
-bool ImportDirectoryParser::Impl::Load()
+void ImportDirectoryParser::Impl::ParseImportDescriptors()
 {
-	_importSection = _parser.ReadDirectoryTable<ImportDirectoryTable>(&_importTable, DirectoryOffsets::Import);
+	_parsedDescriptors.resize(_descriptors.size()-1);
 
-	return _importSection != nullptr;
+	for (int i = 0; i < _parsedDescriptors.size(); ++i)
+	{
+		_parsedDescriptors[i].dllName = _parser.ReadStringFromRVA(_descriptors[i].NameRVA);
+	}
 }
 
+void ImportDirectoryParser::Impl::LoadImportDescriptors(const uint32_t startRva)
+{	
+	StreamParser& streamParser = _parser.GetStreamParser();
 
+	streamParser.Seek(_importSection->GetFilePointer(startRva));
 
+	const DataDirectory& importDir = _parser.GetDirectory(DirectoryOffsets::Import);
+
+	_descriptors.resize(importDir.Size / sizeof(ImportDescriptor));
+
+	for (size_t i=0; i<_descriptors.size(); ++i)
+	{
+		// initialize import descriptor
+		streamParser.Read<ImportDescriptor>(&_descriptors[i]);
+
+		if (_descriptors[i].IsNullDescriptor() && i != (_descriptors.size() - 1))
+		{
+			// warning
+			break;
+		}
+	}
+}
+
+bool ImportDirectoryParser::Impl::Load()
+{
+	const DataDirectory& dir = _parser.GetDirectory(DirectoryOffsets::Import);
+
+	_importSection = &_parser.GetMatchSection(dir.RVA);
+
+	if (_importSection == nullptr) { return false; }
+	
+	LoadImportDescriptors(dir.RVA);
+
+	ParseImportDescriptors();
+
+	return true;
+}

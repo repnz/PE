@@ -160,7 +160,7 @@
     <ClInclude Include="Headers\Directories\Debug.h" />
     <ClInclude Include="Headers\Directories\DelayLoad.h" />
     <ClInclude Include="Headers\Directories\HintNameTable.h" />
-    <ClInclude Include="Headers\Directories\ImportTable.h" />
+    <ClInclude Include="Headers\Directories\ImportDirectory.h" />
     <ClInclude Include="Headers\Directories\Relocations.h" />
     <ClInclude Include="Headers\Directories\Resource.h" />
     <ClInclude Include="Headers\Directories\TLS.h" />

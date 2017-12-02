@@ -2,13 +2,18 @@
 #include <cstdint>
 #include <PE.Parser/Pack.h>
 
-PACK(struct ImportDirectoryTable
+PACK(struct ImportDescriptor
 {
 	uint32_t ImportLookupTableRVA;
 	uint32_t TimeDateStamp;
 	uint32_t ForwarderChain;
 	uint32_t NameRVA;
 	uint32_t ImportAddressTableRVA;
+
+	bool IsNullDescriptor()
+	{
+		return ImportLookupTableRVA == 0;
+	}
 });
 
 PACK(struct ImportLookupTableEntry32

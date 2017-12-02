@@ -99,7 +99,7 @@ void ExportDirectoryParser::Impl::LoadEntries()
 
 	LoadAddressTable(addresses.data());
 	LoadNamePointerTable(namePointers.data());
-	LoadOrdinalTable(ordinals.data());
+	LoadOrdinalTable(ordinals.data()); 
 	
 	_entries.resize(_exportTable.NumberOfNamePointers);
 

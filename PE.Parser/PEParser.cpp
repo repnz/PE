@@ -1,5 +1,5 @@
 #include <PE.Parser/PEParser.h>
-#include "Headers/DirectoryOffset.h"
+#include <PE.Parser/Headers/DirectoryOffset.h>
 
 #include <iostream>
 
@@ -107,26 +107,4 @@ StreamParser& PEParser::GetStreamParser()
 const Headers::DataDirectory& PEParser::GetDirectory(const uint32_t offset) const
 {
 	return _directories.at(offset);
-}
-
-const SectionHeader* PEParser::ReadDirectoryTable(void* directoryTable, const uint32_t offset, const size_t size) 
-{
-	const Headers::DataDirectory& dir = GetDirectory(offset);
-
-	if (dir.RVA == 0 && dir.Size == 0)
-	{
-		return nullptr;
-	}
-
-	const SectionHeader* section = &GetMatchSection(dir.RVA);
-
-	const uint32_t filePointer = section->GetFilePointer(dir.RVA);
-
-	_streamParser.Read(
-		&directoryTable,
-		filePointer,
-		size
-		);
-
-	return section;
 }

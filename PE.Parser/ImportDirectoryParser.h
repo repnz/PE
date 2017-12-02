@@ -1,7 +1,14 @@
 #pragma once
-#include <memory>
 #include <PE.Parser/PEParser.h>
-#include "Headers/Directories/ImportTable.h"
+#include <PE.Parser/Headers/Directories/ImportDirectory.h>
+
+#include <memory>
+
+class ParsedImportDescriptor
+{
+public:
+	std::string dllName;
+};
 
 class ImportDirectoryParser
 {
@@ -14,7 +21,9 @@ public:
 
 	bool Load();
 
-	const ImportDirectoryTable& GetImportTable() const;
+	const std::vector<ImportDescriptor>& GetImportDescriptors() const;
+
+	const std::vector<ParsedImportDescriptor>& GetParsedImportDescriptors() const;
 
 	~ImportDirectoryParser();
 
