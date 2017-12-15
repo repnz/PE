@@ -4,19 +4,24 @@
 
 PACK(struct ImportDescriptor
 {
-	uint32_t ImportLookupTableRVA;
+	union
+	{
+		uint32_t Characteristics;
+		uint32_t OriginalFirstThunk;
+	};
+	
 	uint32_t TimeDateStamp;
 	uint32_t ForwarderChain;
 	uint32_t NameRVA;
-	uint32_t ImportAddressTableRVA;
+	uint32_t FirstThunk;
 
 	bool IsNullDescriptor()
 	{
-		return ImportLookupTableRVA == 0;
+		return NameRVA == 0;
 	}
 });
 
-PACK(struct ImportLookupTableEntry32
+PACK(struct ImportThunk32
 {
 	uint32_t Value;
 
@@ -25,7 +30,7 @@ PACK(struct ImportLookupTableEntry32
 	uint32_t ActualValue() const { return Value & 0x7FFFFFFF; }
 });
 
-PACK(struct ImportLookupTableEntry64
+PACK(struct ImportThunk64
 {
 	uint64_t Value;
 
@@ -33,3 +38,9 @@ PACK(struct ImportLookupTableEntry64
 
 	uint64_t ActualValue() const { return Value & 0x7FFFFFFFFFFFFFFF; }
 });
+
+#ifdef PE32
+#define ImportThunk ImportThunk32
+#else
+#define ImportThunk ImportThunk64
+#endif

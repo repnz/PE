@@ -39,9 +39,13 @@ public:
 	template <typename T>
 	void ReadVector(std::vector<T>& v, const std::strstream::pos_type pos, const std::size_t count);
 
+	template <typename T>
+	void ReadNullTerminatedVector(std::vector<T>& v);
 
 	template <typename T>
 	void ReadVector(std::vector<T>& v, const std::size_t count);
+
+	std::string ReadString();
 
 	std::string ReadString(uint32_t filePointer);
 	
@@ -82,7 +86,7 @@ template <typename T>
 T StreamParser::Read(const std::strstream::pos_type pos)
 {
 	T data;
-	ReadFrom(data, pos);
+	ReadFrom(&data, pos);
 	return data;
 }
 
@@ -90,7 +94,7 @@ template <typename T>
 T StreamParser::Read()
 {
 	T data;
-	ReadFrom(data);
+	Read(&data, sizeof(T));
 	return data;
 }
 
@@ -127,6 +131,36 @@ void StreamParser::ReadVector(std::vector<T>& v, const std::strstream::pos_type 
 	_stream.seekg(pos);
 
 	ReadVector<T>(v, count);
+}
+
+template <typename T>
+bool IsAllZero(const T* t)
+{
+	const uint8_t* buff = reinterpret_cast<const uint8_t*>(t);
+
+	for (uint32_t i = 0; i < sizeof(T); ++i)
+	{
+		if (buff[i] != 0)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+template <typename T>
+void StreamParser::ReadNullTerminatedVector(std::vector<T>& v)
+{
+	uint32_t in = 0;
+
+	do
+	{
+		v.resize(in + 1);
+		Read(&v[in], sizeof(T));
+		++in;
+	}
+	while (!IsAllZero(&v[in - 1]));
 }
 
 

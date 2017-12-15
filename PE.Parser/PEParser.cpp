@@ -53,9 +53,15 @@ void PEParser::ReadData(void* ptr, const uint32_t rva, const uint32_t size)
 	);
 }
 
+std::string PEParser::ReadStringFromRVA(const SectionHeader& section, const uint32_t rva)
+{
+	const uint32_t filePointer = section.GetFilePointer(rva);
+	return _streamParser.ReadString(filePointer);
+}
+
 std::string PEParser::ReadStringFromRVA(const uint32_t rva)
 {
-	return _streamParser.ReadString(RVAToFilePointer(rva));
+	return ReadStringFromRVA(GetMatchSection(rva), rva);
 }
 
 uint8_t* PEParser::GetSectionData(const uint32_t index)

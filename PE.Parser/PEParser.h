@@ -60,4 +60,6 @@ public:
 	{
 		ReadData(ptr, rva, sizeof(T));
 	}
+
+	std::string PEParser::ReadStringFromRVA(const Headers::SectionHeader& section, const uint32_t rva);
 };

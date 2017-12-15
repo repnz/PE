@@ -35,13 +35,6 @@ int main()
 
 	WriteSectionHeaders(peParser, std::cout);
 
-	ExportDirectoryParser exportsParser(peParser);
-	
-	if (exportsParser.Load())
-	{
-		//WriteExports(exportsParser, std::cout);
-	}
-
 	ImportDirectoryParser importsParser(peParser);
 
 	if (importsParser.Load())
@@ -136,6 +129,19 @@ void WriteImports(const ImportDirectoryParser& parser, std::ostream& output)
 	for (const ParsedImportDescriptor& descriptor : parser.GetParsedImportDescriptors())
 	{
 		output << descriptor.dllName << std::endl;
+
+		for(const ImportedFunction& function : descriptor.functions)
+		{
+			if (function.IsOrdinal())
+			{
+				std::cout << "\tOrdinal" << function.ordinal << std::endl;
+			}
+			else
+			{
+				std::cout << "\t" << function.name << " Hint:" << function.hint << std::endl;
+			}
+			
+		}
 	}
 
 	output << std::endl;

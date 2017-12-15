@@ -13,7 +13,7 @@ public:
 	std::vector<ParsedImportDescriptor> _parsedDescriptors;
 	std::vector<ImportDescriptor> _descriptors;
 	const SectionHeader* _importSection;
-	Impl(PEParser& parser);
+	explicit Impl(PEParser& parser);
 
 	void ParseImportDescriptors();
 	bool Load();
@@ -48,11 +48,41 @@ ImportDirectoryParser::Impl::Impl(PEParser& parser) : _parser(parser), _importSe
 
 void ImportDirectoryParser::Impl::ParseImportDescriptors()
 {
+	StreamParser& streamParser = _parser.GetStreamParser();
+
 	_parsedDescriptors.resize(_descriptors.size()-1);
 
-	for (int i = 0; i < _parsedDescriptors.size(); ++i)
+	for (size_t i = 0; i < _parsedDescriptors.size(); ++i)
 	{
-		_parsedDescriptors[i].dllName = _parser.ReadStringFromRVA(_descriptors[i].NameRVA);
+		ParsedImportDescriptor& parsedDescriptor = _parsedDescriptors[i];
+		ImportDescriptor& descriptor = _descriptors[i];
+
+		const uint32_t fp = _importSection->GetFilePointer(descriptor.NameRVA);
+		parsedDescriptor.dllName = streamParser.ReadString(fp);
+		
+		std::vector<ImportThunk> thunks;
+		streamParser.Seek(_importSection->GetFilePointer(descriptor.OriginalFirstThunk));
+		streamParser.ReadNullTerminatedVector(thunks);
+
+		const uint32_t functionsSize = thunks.size() - 1;
+		parsedDescriptor.functions.resize(functionsSize);
+
+		for (size_t j=0; j<functionsSize; ++j)
+		{
+			const uint32_t val = thunks[j].ActualValue();
+
+			if (thunks[j].IsOrdinal())
+			{
+				parsedDescriptor.functions[j] = ImportedFunction(val);
+			}
+			else
+			{
+				const uint32_t importByNamePtr = _importSection->GetFilePointer(val);
+				const uint16_t hint = streamParser.Read<uint16_t>(importByNamePtr);
+				const std::string functionName = streamParser.ReadString();
+				parsedDescriptor.functions[j] = ImportedFunction(functionName, hint);
+			}
+		}
 	}
 }
 
