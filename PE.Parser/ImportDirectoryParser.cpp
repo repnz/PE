@@ -17,7 +17,9 @@ public:
 	explicit Impl(PEParser& parser);
 
 	void ParseImportDescriptors();
-	ImportedFunction ParseImportThunk(ImportThunk thunk);
+	ImportedFunction ParseImportThunk(const ImportThunk thunk);
+	ParsedImportDescriptor ParseImportDescriptor(const ImportDescriptor& descriptor);
+
 	bool Load();
 };
 
@@ -44,11 +46,11 @@ const std::vector<ParsedImportDescriptor>& ImportDirectoryParser::GetParsedImpor
 
 ImportDirectoryParser::~ImportDirectoryParser() = default;
 
-ImportDirectoryParser::Impl::Impl(PEParser& parser) : _parser(parser), _importSection(nullptr), streamParser(parser.GetStreamParser())
+ImportDirectoryParser::Impl::Impl(PEParser& parser) : _parser(parser), streamParser(parser.GetStreamParser()), _importSection(nullptr)
 {
 }
 
-ImportedFunction ImportDirectoryParser::Impl::ParseImportThunk(ImportThunk thunk)
+ImportedFunction ImportDirectoryParser::Impl::ParseImportThunk(const ImportThunk thunk)
 {
 	const uint32_t val = thunk.ActualValue();
 
@@ -65,31 +67,39 @@ ImportedFunction ImportDirectoryParser::Impl::ParseImportThunk(ImportThunk thunk
 	return ImportedFunction(functionName, hint);
 }
 
+ParsedImportDescriptor ImportDirectoryParser::Impl::ParseImportDescriptor(const ImportDescriptor& descriptor)
+{
+	ParsedImportDescriptor parsedDescriptor;
+
+	const uint32_t fp = _importSection->GetFilePointer(descriptor.NameRVA);
+	parsedDescriptor.dllName = streamParser.ReadString(fp);
+
+	// read ImportThunks
+	std::vector<ImportThunk> thunks;
+	streamParser.Seek(_importSection->GetFilePointer(descriptor.OriginalFirstThunk));
+	streamParser.ReadNullTerminatedVector(thunks);
+
+	// parse ImportThunks into ImportedFunctions
+
+	const uint32_t functionsSize = thunks.size() - 1;
+	parsedDescriptor.functions.reserve(functionsSize);
+
+	for (size_t i = 0; i<functionsSize; ++i)
+	{
+		parsedDescriptor.functions.push_back(ParseImportThunk(thunks[i]));
+	}
+
+	return parsedDescriptor;
+}
+
 void ImportDirectoryParser::Impl::ParseImportDescriptors()
 {
-	StreamParser& streamParser = _parser.GetStreamParser();
+	const size_t parsedDescriptorSize = _descriptors.size() - 1;
+	_parsedDescriptors.reserve(parsedDescriptorSize);
 
-	_parsedDescriptors.resize(_descriptors.size()-1);
-
-	for (size_t i = 0; i < _parsedDescriptors.size(); ++i)
+	for (size_t i = 0; i < parsedDescriptorSize; ++i)
 	{
-		ParsedImportDescriptor& parsedDescriptor = _parsedDescriptors[i];
-		ImportDescriptor& descriptor = _descriptors[i];
-
-		const uint32_t fp = _importSection->GetFilePointer(descriptor.NameRVA);
-		parsedDescriptor.dllName = streamParser.ReadString(fp);
-		
-		std::vector<ImportThunk> thunks;
-		streamParser.Seek(_importSection->GetFilePointer(descriptor.OriginalFirstThunk));
-		streamParser.ReadNullTerminatedVector(thunks);
-
-		const uint32_t functionsSize = thunks.size() - 1;
-		parsedDescriptor.functions.resize(functionsSize);
-
-		for (size_t j=0; j<functionsSize; ++j)
-		{
-			parsedDescriptor.functions[j] = ParseImportThunk(thunks[j]);
-		}
+		_parsedDescriptors.push_back(ParseImportDescriptor(_descriptors[i]));
 	}
 }
 
