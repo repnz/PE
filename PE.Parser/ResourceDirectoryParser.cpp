@@ -15,17 +15,23 @@ public:
 	void LoadResourceEntryName(StreamParser& parser, ParsedResourceEntry* entry);
 	void LoadDataEntry(StreamParser& parser, ParsedResourceEntry* entry);
 	void ParseResourceEntry(const uint32_t level, StreamParser& parser, ParsedResourceEntry* entry);
-	void Load();
+	bool Load();
 	void ParseResourceTable(ParsedResourceTable* table, const uint32_t filePointer, const uint32_t level);
+	const ParsedResourceTable& GetRootTable() const;
 };
 
 ResourceDirectoryParser::ResourceDirectoryParser(PEParser& parser) : _impl(std::make_unique<Impl>(parser))
 {
 }
 
-void ResourceDirectoryParser::Load()
+bool ResourceDirectoryParser::Load()
 {
-	_impl->Load();
+	return _impl->Load();
+}
+
+const ParsedResourceTable& ResourceDirectoryParser::GetRootTable() const
+{
+	return _impl->GetRootTable();
 }
 
 
@@ -123,10 +129,18 @@ void ResourceDirectoryParser::Impl::ParseResourceTable(ParsedResourceTable* tabl
 	}
 }
 
-void ResourceDirectoryParser::Impl::Load()
+const ParsedResourceTable& ResourceDirectoryParser::Impl::GetRootTable() const
+{
+	return _rootTable;
+}
+
+bool ResourceDirectoryParser::Impl::Load()
 {
 	const DataDirectory& resourceDir = _peParser.GetDirectory(Headers::DirectoryOffsets::Resource);
 	_resourceSection = &_peParser.GetMatchSection(resourceDir.RVA);
 	
+	if (_resourceSection == nullptr) { return false; }
+
 	ParseResourceTable(&_rootTable, _resourceSection->PointerToRawData, 0);
+	return true;
 }

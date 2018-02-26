@@ -41,7 +41,8 @@ private:
 	std::unique_ptr<Impl> _impl;
 public:
 	explicit ResourceDirectoryParser(PEParser& peParser);
-	void Load();
+	bool Load();
+	const ParsedResourceTable& GetRootTable() const;
 	~ResourceDirectoryParser();
 };
 

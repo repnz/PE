@@ -20,7 +20,7 @@ void WriteDataDirectories(const PEParser& parser, std::ostream& output);
 void WriteSectionHeaders(const PEParser& parser, std::ostream& output);
 void WriteExports(const ExportDirectoryParser& parser, std::ostream& output);
 void WriteImports(const ImportDirectoryParser& parser, std::ostream& output);
-void WriteResourceEntries(const ResourceDirectoryParser& parser, std::ostream& output);
+void WriteResources(const ResourceDirectoryParser& parser, std::ostream& output);
 
 int main()
 {
@@ -31,12 +31,13 @@ int main()
 	peFile.open(fileName, std::ios_base::binary);
 	
 	PEParser peParser(peFile);
-	peParser.Load();
 
 	ResourceDirectoryParser resourceParser(peParser);
 
-	resourceParser.Load();
-
+	if(resourceParser.Load())
+	{
+		WriteResources(resourceParser, std::cout);
+	}
 
 	getchar();
 	return 0;
@@ -142,4 +143,9 @@ void WriteImports(const ImportDirectoryParser& parser, std::ostream& output)
 
 	output << std::endl;
 	output.flags(oldFlags);
+}
+
+void WriteResources(const ResourceDirectoryParser& parser, std::ostream& output)
+{
+	
 }
