@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include "PE.Parser/ResourceDirectoryParser.h"
 
 
 using namespace Headers;
@@ -19,6 +20,7 @@ void WriteDataDirectories(const PEParser& parser, std::ostream& output);
 void WriteSectionHeaders(const PEParser& parser, std::ostream& output);
 void WriteExports(const ExportDirectoryParser& parser, std::ostream& output);
 void WriteImports(const ImportDirectoryParser& parser, std::ostream& output);
+void WriteResourceEntries(const ResourceDirectoryParser& parser, std::ostream& output);
 
 int main()
 {
@@ -30,17 +32,11 @@ int main()
 	
 	PEParser peParser(peFile);
 	peParser.Load();
-	
-	WriteDataDirectories(peParser, std::cout);
 
-	WriteSectionHeaders(peParser, std::cout);
+	ResourceDirectoryParser resourceParser(peParser);
 
-	ImportDirectoryParser importsParser(peParser);
+	resourceParser.Load();
 
-	if (importsParser.Load())
-	{
-		WriteImports(importsParser, std::cout);
-	}
 
 	getchar();
 	return 0;

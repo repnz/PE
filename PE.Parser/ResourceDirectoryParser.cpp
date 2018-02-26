@@ -9,11 +9,11 @@ class ResourceDirectoryParser::Impl
 private:
 	PEParser& _peParser;
 	const Headers::SectionHeader* _resourceSection;
-	ResourceTable _rootTable;
+	ParsedResourceTable _rootTable;
 public:
 	explicit Impl(PEParser& parser);
 	void Load();
-	void LoadResourceTable(ResourceTable& table, const uint32_t filePointer);
+	void ParseResourceTable(ParsedResourceTable* table, const uint32_t filePointer, const uint32_t level);
 };
 
 ResourceDirectoryParser::ResourceDirectoryParser(PEParser& parser) : _impl(std::make_unique<Impl>(parser))
@@ -33,16 +33,68 @@ ResourceDirectoryParser::Impl::Impl(PEParser& parser) : _peParser(parser), _reso
 {
 }
 
-void ResourceDirectoryParser::Impl::LoadResourceTable(ResourceTable& table, const uint32_t filePointer)
+void ResourceDirectoryParser::Impl::ParseResourceTable(ParsedResourceTable* table, const uint32_t filePointer, const uint32_t level)
 {
-	_peParser.GetStreamParser().ReadFrom(&table.table, filePointer);
-	const uint32_t numberOfEntries = table.table.NumberOfNameEntries + table.table.NumberOfIdEntries;
+	StreamParser& parser = _peParser.GetStreamParser();
+
+	parser.ReadFrom(&table->RawTable, filePointer);
+
+	table->Level = level;
 	
-	_rootTable.entries.resize(numberOfEntries);
+	const uint32_t numberOfEntries = table->RawTable.NumberOfNameEntries + table->RawTable.NumberOfIdEntries;
+
+	table->Entries.resize(numberOfEntries);
 	
-	for (uint32_t i = 0; i<numberOfEntries; ++i)
+	for (uint32_t i=0; i<numberOfEntries; ++i)
 	{
-		_peParser.GetStreamParser().Read(&table.entries[i]);
+		parser.Read<ResourceDirectoryEntry>(&table->Entries[i].RawEntry);
+	}
+
+	for (uint32_t i=0; i<numberOfEntries; ++i)
+	{
+		ParsedResourceEntry* entry = &table->Entries[i];
+		
+		if (entry->HasName()) // if has a name, parse the name
+		{
+			const uint32_t nameFilePointer =
+				_resourceSection->PointerToRawData + entry->RawEntry.NameOffset();
+
+			parser.ReadFrom<uint16_t>(&entry->Name.Length, nameFilePointer);
+			
+			if (entry->Name.Length % 2 == 1) { entry->Name.Length++; }
+
+			// Allocate entry, delete it eventually
+			entry->Name.String = new uint16_t[entry->Name.Length];
+
+			parser.Read(entry->Name.String, entry->Name.Length);
+		}
+
+		if (entry->IsSubdirectory())
+		{
+			// handle subdirectory data
+
+			const uint32_t subdirectoryPointer =
+				_resourceSection->PointerToRawData + entry->RawEntry.SubdirectoryOffset();
+
+			// recursive call to LoadResourceTable
+			ParseResourceTable(&entry->SubDirectory, subdirectoryPointer, level+1);
+		}
+		else
+		{
+			// get data entry 
+			const uint32_t dataEntryFilePointer =
+				_resourceSection->PointerToRawData + entry->RawEntry.DataEntryOffset();
+
+			parser.ReadFrom<ResourceDataEntry>(&entry->DataEntry, dataEntryFilePointer);
+			
+			const uint32_t dataFilePointer =
+				_resourceSection->GetFilePointer(entry->DataEntry.DataRVA);
+			
+			// Allocation of new buffer (find way to delete it)
+			entry->Data = new uint8_t[entry->DataEntry.Size];
+
+			parser.Read(entry->Data, dataFilePointer, entry->DataEntry.Size);
+		}
 	}
 }
 
@@ -51,5 +103,5 @@ void ResourceDirectoryParser::Impl::Load()
 	const DataDirectory& resourceDir = _peParser.GetDirectory(Headers::DirectoryOffsets::Resource);
 	_resourceSection = &_peParser.GetMatchSection(resourceDir.RVA);
 	
-	LoadResourceTable(_rootTable, _resourceSection->PointerToRawData);
+	ParseResourceTable(&_rootTable, _resourceSection->PointerToRawData, 0);
 }

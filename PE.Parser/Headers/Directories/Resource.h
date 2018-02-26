@@ -14,17 +14,17 @@ PACK(struct ResourceDirectoryTable
 
 PACK(struct ResourceDirectoryEntry
 {
-	union
-	{
-		uint32_t NameRVA;
-		uint32_t Id;
-	};
-	
-	union
-	{
-		uint32_t DataEntryRVA;
-		uint32_t SubdirectoryRVA;
-	};
+	uint32_t IdNameUnion;
+	uint32_t DataEntrySubdirectoryUnion;
+
+	bool IsSubdirectory() const { return DataEntrySubdirectoryUnion & 0x80000000; }
+	bool HasName() const { return  IdNameUnion & 0x80000000; }
+
+	uint32_t NameOffset() const { return IdNameUnion ^ 0x80000000; }
+	uint32_t IdOffset() const { return IdNameUnion; }
+
+	uint32_t DataEntryOffset() const { return DataEntrySubdirectoryUnion; }
+	uint32_t SubdirectoryOffset() const { return DataEntrySubdirectoryUnion ^ 0x80000000; }
 });
 
 PACK(struct ResourceDirectoryString

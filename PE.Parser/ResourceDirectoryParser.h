@@ -1,20 +1,36 @@
 #pragma once
 #include <memory>
 #include <PE.Parser/PEParser.h>
-#include "Headers/Directories/Resource.h"
+#include <PE.Parser/Headers/Directories/Resource.h>
 
-struct ResourceTable;
+struct ParsedResourceEntry;
 
-struct ResourceEntry
+namespace ResourceDirectoryLevel
 {
-	ResourceTable* SubTable;
+	const uint32_t Type		= 0x00;
+	const uint32_t Name		= 0x01;
+	const uint32_t Language = 0x02;
+}
 
+
+struct ParsedResourceTable
+{
+	uint32_t Level;
+	ResourceDirectoryTable RawTable;
+	std::vector<ParsedResourceEntry> Entries;	
 };
 
-struct ResourceTable
+
+struct ParsedResourceEntry
 {
-	ResourceDirectoryTable table;
-	std::vector<ResourceEntry> entries;
+	ResourceDirectoryEntry RawEntry;
+	ResourceDataEntry DataEntry;
+	uint8_t* Data;
+	ParsedResourceTable SubDirectory;
+	ResourceDirectoryString Name;
+
+	bool IsSubdirectory() { return RawEntry.IsSubdirectory(); }
+	bool HasName() { return RawEntry.HasName(); }
 };
 
 
