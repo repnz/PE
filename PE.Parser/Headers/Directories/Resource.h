@@ -14,10 +14,17 @@ PACK(struct ResourceDirectoryTable
 
 PACK(struct ResourceDirectoryEntry
 {
-	uint32_t NameRVA;
-	uint32_t Id;
-	uint32_t DataEntryRVA;
-	uint32_t SubdirectoryRVA;
+	union
+	{
+		uint32_t NameRVA;
+		uint32_t Id;
+	};
+	
+	union
+	{
+		uint32_t DataEntryRVA;
+		uint32_t SubdirectoryRVA;
+	};
 });
 
 PACK(struct ResourceDirectoryString
