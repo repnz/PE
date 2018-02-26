@@ -4,13 +4,13 @@
 #include <PE.Parser/PEParser.h>
 #include <PE.Parser/ExportDirectoryParser.h>
 #include <PE.Parser/ImportDirectoryParser.h>
+#include <PE.Parser/ResourceDirectoryParser.h>
 
 #include <fstream>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include "PE.Parser/ResourceDirectoryParser.h"
 
 
 using namespace Headers;

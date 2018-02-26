@@ -12,6 +12,9 @@ private:
 	ParsedResourceTable _rootTable;
 public:
 	explicit Impl(PEParser& parser);
+	void LoadResourceEntryName(StreamParser& parser, ParsedResourceEntry* entry);
+	void LoadDataEntry(StreamParser& parser, ParsedResourceEntry* entry);
+	void ParseResourceEntry(const uint32_t level, StreamParser& parser, ParsedResourceEntry* entry);
 	void Load();
 	void ParseResourceTable(ParsedResourceTable* table, const uint32_t filePointer, const uint32_t level);
 };
@@ -33,6 +36,66 @@ ResourceDirectoryParser::Impl::Impl(PEParser& parser) : _peParser(parser), _reso
 {
 }
 
+void ResourceDirectoryParser::Impl::LoadResourceEntryName(StreamParser& parser, ParsedResourceEntry* entry)
+{
+	const uint32_t nameFilePointer =
+		_resourceSection->PointerToRawData + entry->RawEntry.NameOffset();
+
+	parser.ReadFrom<uint16_t>(&entry->Name.Length, nameFilePointer);
+			
+	// align size to word alignment 
+	if (entry->Name.Length % 2 == 1) { entry->Name.Length++; }
+
+	// Allocate entry, delete it eventually
+	entry->Name.String = new uint16_t[entry->Name.Length];
+
+	parser.Read(entry->Name.String, entry->Name.Length);
+}
+
+void ResourceDirectoryParser::Impl::LoadDataEntry(StreamParser& parser, ParsedResourceEntry* entry)
+{
+	// Load Data Entry Sturcture
+	
+	const uint32_t dataEntryFilePointer =
+		_resourceSection->PointerToRawData + entry->RawEntry.DataEntryOffset();
+
+	parser.ReadFrom<ResourceDataEntry>(&entry->DataEntry, dataEntryFilePointer);
+	
+	// Load Actual Resource Data
+
+	const uint32_t dataFilePointer =
+		_resourceSection->GetFilePointer(entry->DataEntry.DataRVA);
+			
+	// Allocation of new buffer (find way to delete it)
+	entry->Data = new uint8_t[entry->DataEntry.Size];
+
+	parser.Read(entry->Data, dataFilePointer, entry->DataEntry.Size);
+}
+
+void ResourceDirectoryParser::Impl::ParseResourceEntry(const uint32_t level, StreamParser& parser, ParsedResourceEntry* entry)
+{
+	if (entry->HasName()) // if has a name, parse the name
+	{
+		LoadResourceEntryName(parser, entry);
+	}
+
+	if (entry->IsSubdirectory())
+	{
+		// handle subdirectory data
+
+		const uint32_t subdirectoryPointer =
+			_resourceSection->PointerToRawData + entry->RawEntry.SubdirectoryOffset();
+
+		// recursive call to LoadResourceTable
+		ParseResourceTable(&entry->SubDirectory, subdirectoryPointer, level+1);
+	}
+	else
+	{
+		// get data entry 
+		LoadDataEntry(parser, entry);
+	}
+}
+
 void ResourceDirectoryParser::Impl::ParseResourceTable(ParsedResourceTable* table, const uint32_t filePointer, const uint32_t level)
 {
 	StreamParser& parser = _peParser.GetStreamParser();
@@ -45,56 +108,18 @@ void ResourceDirectoryParser::Impl::ParseResourceTable(ParsedResourceTable* tabl
 
 	table->Entries.resize(numberOfEntries);
 	
+	// Read Raw Resource Entries
+
 	for (uint32_t i=0; i<numberOfEntries; ++i)
 	{
 		parser.Read<ResourceDirectoryEntry>(&table->Entries[i].RawEntry);
 	}
 
+	// Parse Resource Entries
+
 	for (uint32_t i=0; i<numberOfEntries; ++i)
-	{
-		ParsedResourceEntry* entry = &table->Entries[i];
-		
-		if (entry->HasName()) // if has a name, parse the name
-		{
-			const uint32_t nameFilePointer =
-				_resourceSection->PointerToRawData + entry->RawEntry.NameOffset();
-
-			parser.ReadFrom<uint16_t>(&entry->Name.Length, nameFilePointer);
-			
-			if (entry->Name.Length % 2 == 1) { entry->Name.Length++; }
-
-			// Allocate entry, delete it eventually
-			entry->Name.String = new uint16_t[entry->Name.Length];
-
-			parser.Read(entry->Name.String, entry->Name.Length);
-		}
-
-		if (entry->IsSubdirectory())
-		{
-			// handle subdirectory data
-
-			const uint32_t subdirectoryPointer =
-				_resourceSection->PointerToRawData + entry->RawEntry.SubdirectoryOffset();
-
-			// recursive call to LoadResourceTable
-			ParseResourceTable(&entry->SubDirectory, subdirectoryPointer, level+1);
-		}
-		else
-		{
-			// get data entry 
-			const uint32_t dataEntryFilePointer =
-				_resourceSection->PointerToRawData + entry->RawEntry.DataEntryOffset();
-
-			parser.ReadFrom<ResourceDataEntry>(&entry->DataEntry, dataEntryFilePointer);
-			
-			const uint32_t dataFilePointer =
-				_resourceSection->GetFilePointer(entry->DataEntry.DataRVA);
-			
-			// Allocation of new buffer (find way to delete it)
-			entry->Data = new uint8_t[entry->DataEntry.Size];
-
-			parser.Read(entry->Data, dataFilePointer, entry->DataEntry.Size);
-		}
+	{		
+		ParseResourceEntry(level, parser, &table->Entries[i]);
 	}
 }
 
