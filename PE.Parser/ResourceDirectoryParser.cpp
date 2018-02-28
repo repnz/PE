@@ -73,9 +73,9 @@ void ResourceDirectoryParser::Impl::LoadDataEntry(StreamParser& parser, ParsedRe
 		_resourceSection->GetFilePointer(entry->DataEntry.DataRVA);
 			
 	// Allocation of new buffer (find way to delete it)
-	entry->Data = new uint8_t[entry->DataEntry.Size];
+	entry->Data.reset(new uint8_t[entry->DataEntry.Size]);
 
-	parser.Read(entry->Data, dataFilePointer, entry->DataEntry.Size);
+	parser.Read(entry->Data.get(), dataFilePointer, entry->DataEntry.Size);
 }
 
 void ResourceDirectoryParser::Impl::ParseResourceEntry(const uint32_t level, StreamParser& parser, ParsedResourceEntry* entry)

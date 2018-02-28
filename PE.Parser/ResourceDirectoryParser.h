@@ -25,7 +25,7 @@ struct ParsedResourceEntry
 {
 	ResourceDirectoryEntry RawEntry;
 	ResourceDataEntry DataEntry;
-	uint8_t* Data;
+	std::unique_ptr<uint8_t> Data;
 	ParsedResourceTable SubDirectory;
 	ResourceDirectoryString Name;
 
