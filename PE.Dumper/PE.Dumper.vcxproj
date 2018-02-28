@@ -141,6 +141,9 @@
       <Project>{b9d9ef3a-5d0d-48ed-9246-829f2a4fb482}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ArgumentsParser.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

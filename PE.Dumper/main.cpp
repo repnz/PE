@@ -11,37 +11,117 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-
+#include <PE.Dumper/ArgumentsParser.h>
 
 using namespace Headers;
 
-
+void WriteHelp(std::ostream& output);
 void WriteDataDirectories(const PEParser& parser, std::ostream& output);
 void WriteSectionHeaders(const PEParser& parser, std::ostream& output);
 void WriteExports(const ExportDirectoryParser& parser, std::ostream& output);
 void WriteImports(const ImportDirectoryParser& parser, std::ostream& output);
 void WriteResourceTable(const ParsedResourceTable& table, std::ostream& output, std::string tab = " ");
 
-int main()
+int main(const int argc, const char** argv)
 {
-	const char* fileName = "C:\\Windows\\System32\\kernel32.dll";
+	ArgumentsParser argsParser(argc, argv);
+
+	if (argsParser.cmdOptionExists("--help"))
+	{
+		WriteHelp(std::cout);
+		return -1;
+	}
+
+	std::string fileName = argsParser.getCmdOption("--filename");
+
+	if (fileName.empty())
+	{
+		std::cout << "<WARNING> PE Filename is empty. dumping kernel32.dll (use -f [fileName] to choose file)";
+		fileName = "C:\\Windows\\System32\\kernel32.dll";
+	}
 
 	std::ifstream peFile;
-	peFile.exceptions(std::istream::failbit | std::istream::badbit);
 	peFile.open(fileName, std::ios_base::binary);
+
+	if (!peFile.is_open())
+	{
+		std::cerr << "Error loading file '" << fileName << "': ";
+		char* errBuffer = new char[1024];
+		strerror_s(errBuffer, 1024, errno);
+		std::cerr << errBuffer << std::endl;
+		delete[] errBuffer;
+		return -1;
+	}
 	
 	PEParser peParser(peFile);
 	peParser.Load();
 
-	ResourceDirectoryParser resourceParser(peParser);
-
-	if(resourceParser.Load())
+	if (argsParser.cmdOptionExists("--sections"))
 	{
-		WriteResourceTable(resourceParser.GetRootTable(), std::cout);
+		WriteSectionHeaders(peParser, std::cout);
 	}
 
-	getchar();
+	if (argsParser.cmdOptionExists("--data-dirs"))
+	{
+		WriteDataDirectories(peParser, std::cout);
+	}
+
+	if (argsParser.cmdOptionExists("--resources"))
+	{
+		ResourceDirectoryParser resourceParser(peParser);
+
+		if (resourceParser.Load())
+		{
+			WriteResourceTable(resourceParser.GetRootTable(), std::cout);
+		}
+		else
+		{
+			std::cerr << "Cannot load resources." << std::endl;
+		}
+	}
+	
+	if (argsParser.cmdOptionExists("--imports"))
+	{
+		ImportDirectoryParser importParser(peParser);
+
+		if (importParser.Load())
+		{
+			WriteImports(importParser, std::cout);
+		}
+		else
+		{
+			std::cerr << "Cannot load imports" << std::endl;
+		}
+	}
+
+	if (argsParser.cmdOptionExists("--exports"))
+	{
+		ExportDirectoryParser exportsParser(peParser);
+
+		if (exportsParser.Load())
+		{
+			WriteExports(exportsParser, std::cout);
+		}
+		else
+		{
+			std::cerr << "Cannot load exports" << std::endl;
+		}
+	}
+
 	return 0;
+}
+
+void WriteHelp(std::ostream& output)
+{
+	output << "PE.Dumper.exe -> Tool for dumping PE Information" << std::endl;
+	output << "Written by repnz -> github.com/repnz/pe" << std::endl;
+	output << "Options:" << std::endl;
+	output << " Display Help: --help" << std::endl;
+	output << " Section Headers: --sections" << std::endl;
+	output << " Data Directories: --data-dirs" << std::endl;
+	output << " Print All Resources: --resources" << std::endl;
+	output << " Print All Imports: --imports" << std::endl;
+	output << " Print All Exports: --exports" << std::endl;
 }
 
 void WriteDataDirectories(const PEParser& parser, std::ostream& output)
