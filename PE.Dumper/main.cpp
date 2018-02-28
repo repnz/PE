@@ -20,7 +20,7 @@ void WriteDataDirectories(const PEParser& parser, std::ostream& output);
 void WriteSectionHeaders(const PEParser& parser, std::ostream& output);
 void WriteExports(const ExportDirectoryParser& parser, std::ostream& output);
 void WriteImports(const ImportDirectoryParser& parser, std::ostream& output);
-void WriteResources(const ResourceDirectoryParser& parser, std::ostream& output);
+void WriteResourceTable(const ParsedResourceTable& table, std::ostream& output, std::string tab = " ");
 
 int main()
 {
@@ -31,12 +31,13 @@ int main()
 	peFile.open(fileName, std::ios_base::binary);
 	
 	PEParser peParser(peFile);
+	peParser.Load();
 
 	ResourceDirectoryParser resourceParser(peParser);
 
 	if(resourceParser.Load())
 	{
-		WriteResources(resourceParser, std::cout);
+		WriteResourceTable(resourceParser.GetRootTable(), std::cout);
 	}
 
 	getchar();
@@ -131,11 +132,11 @@ void WriteImports(const ImportDirectoryParser& parser, std::ostream& output)
 		{
 			if (function.IsOrdinal())
 			{
-				std::cout << "\tOrdinal" << function.ordinal << std::endl;
+				output << "\tOrdinal" << function.ordinal << std::endl;
 			}
 			else
 			{
-				std::cout << "\t" << function.name << " Hint:" << function.hint << std::endl;
+				output << "\t" << function.name << " Hint:" << function.hint << std::endl;
 			}
 			
 		}
@@ -145,7 +146,50 @@ void WriteImports(const ImportDirectoryParser& parser, std::ostream& output)
 	output.flags(oldFlags);
 }
 
-void WriteResources(const ResourceDirectoryParser& parser, std::ostream& output)
+void WriteResourceTable(const ParsedResourceTable& table, std::ostream& output, std::string tab)
 {
-	
+	output << tab << "Resource Table Data:" << std::endl;
+
+	tab += " ";
+
+	output << tab << "Level" << table.Level << std::endl;
+	output << tab << "Characteristics " << table.RawTable.Characteristics << std::endl;
+	output << tab << "TimeDateStamp " << table.RawTable.TimeDateStamp << std::endl;
+	output << tab << "MajorVersion " << table.RawTable.MajorVersion << std::endl;
+	output << tab << "MinorVersion " << table.RawTable.MinorVersion << std::endl;
+	output << tab << "NumberOfNameEntries " << table.RawTable.NumberOfNameEntries << std::endl;
+	output << tab << "NumberOfIdEntries " << table.RawTable.NumberOfIdEntries << std::endl;
+	output << tab << "Entries: " << std::endl;
+
+	tab += " ";
+
+	for each (const ParsedResourceEntry& entry in table.Entries)
+	{
+		output << tab << "Entry ";
+
+		if (entry.RawEntry.HasName())
+		{
+			std::wcout << std::wstring(reinterpret_cast<wchar_t*>(entry.Name.String),
+				entry.Name.Length);
+		}
+		else
+		{
+			output << entry.RawEntry.Id();
+		}
+
+		if (entry.RawEntry.IsSubdirectory())
+		{
+			output << " Type: SubDirectory";
+			output << std::endl;
+			WriteResourceTable(entry.SubDirectory, output, tab+"  ");
+		}
+		else
+		{
+			output << " Type: DataEntry";
+			output << std::endl;
+			output << " " << tab << "DataEntry.Size " << entry.DataEntry.Size << std::endl;
+			output << " " << tab << "DataEntry.Codepage " << entry.DataEntry.Codepage << std::endl;
+			output << " " << tab << "DataEntry.Reserved " << entry.DataEntry.Reserved << std::endl;
+		}
+	}
 }

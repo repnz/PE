@@ -21,7 +21,7 @@ PACK(struct ResourceDirectoryEntry
 	bool HasName() const { return  IdNameUnion & 0x80000000; }
 
 	uint32_t NameOffset() const { return IdNameUnion ^ 0x80000000; }
-	uint32_t IdOffset() const { return IdNameUnion; }
+	uint32_t Id() const { return IdNameUnion; }
 
 	uint32_t DataEntryOffset() const { return DataEntrySubdirectoryUnion; }
 	uint32_t SubdirectoryOffset() const { return DataEntrySubdirectoryUnion ^ 0x80000000; }
