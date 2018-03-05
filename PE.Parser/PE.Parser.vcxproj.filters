@@ -30,6 +30,9 @@
     <ClCompile Include="ResourceDirectoryParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RelocationsDirectoryParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Coff\CoffLineNumbers.h">
@@ -120,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResourceDirectoryParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RelocationsDirectoryParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

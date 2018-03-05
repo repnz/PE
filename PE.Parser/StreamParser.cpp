@@ -42,7 +42,7 @@ void StreamParser::Seek(const uint32_t filePointer)
 	_stream.seekg(filePointer);
 }
 
-void StreamParser::Move(const int value)
+void StreamParser::Move(const std::strstream::pos_type value)
 {
 	std::strstream::pos_type pos = _stream.tellg();
 

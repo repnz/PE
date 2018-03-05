@@ -5,13 +5,15 @@
 #include <PE.Parser/ExportDirectoryParser.h>
 #include <PE.Parser/ImportDirectoryParser.h>
 #include <PE.Parser/ResourceDirectoryParser.h>
+#include <PE.Parser/RelocationsDirectoryParser.h>
+#include <PE.Dumper/ArgumentsParser.h>
 
 #include <fstream>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include <PE.Dumper/ArgumentsParser.h>
+
 
 using namespace Headers;
 
@@ -21,6 +23,7 @@ void WriteSectionHeaders(const PEParser& parser, std::ostream& output);
 void WriteExports(const ExportDirectoryParser& parser, std::ostream& output);
 void WriteImports(const ImportDirectoryParser& parser, std::ostream& output);
 void WriteResourceTable(const ParsedResourceTable& table, std::ostream& output, std::string tab = " ");
+void WriteBaseRelocations(const RelocationsDirectoryParser& parser, std::ostream& output);
 
 int main(const int argc, const char** argv)
 {
@@ -36,7 +39,7 @@ int main(const int argc, const char** argv)
 
 	if (fileName.empty())
 	{
-		std::cout << "<WARNING> PE Filename is empty. dumping kernel32.dll (use -f [fileName] to choose file)";
+		std::cout << "<WARNING> PE Filename is empty. dumping kernel32.dll (use '--filename [fileName]' to choose file)";
 		fileName = "C:\\Windows\\System32\\kernel32.dll";
 	}
 
@@ -46,11 +49,12 @@ int main(const int argc, const char** argv)
 	if (!peFile.is_open())
 	{
 		std::cerr << "Error loading file '" << fileName << "': ";
-		char* errBuffer = new char[1024];
-		strerror_s(errBuffer, 1024, errno);
-		std::cerr << errBuffer << std::endl;
-		delete[] errBuffer;
-		return -1;
+		std::vector<char> errMsg(1024);
+		char* errMsgPtr = &errMsg[0];
+		strerror_s(errMsgPtr, 1024, errno);
+		errMsgPtr[1023] = 0;
+		std::cerr << errMsgPtr << std::endl;
+		return 0;
 	}
 	
 	PEParser peParser(peFile);
@@ -108,6 +112,14 @@ int main(const int argc, const char** argv)
 		}
 	}
 
+	if (argsParser.cmdOptionExists("--reloc"))
+	{
+		RelocationsDirectoryParser relocParser(peParser);
+		relocParser.Load();
+
+		WriteBaseRelocations(relocParser, std::cout);
+	}
+
 	return 0;
 }
 
@@ -122,6 +134,7 @@ void WriteHelp(std::ostream& output)
 	output << " Print All Resources: --resources" << std::endl;
 	output << " Print All Imports: --imports" << std::endl;
 	output << " Print All Exports: --exports" << std::endl;
+	output << "Print All Base Relocations: --base-reloc" << std::endl;
 }
 
 void WriteDataDirectories(const PEParser& parser, std::ostream& output)
@@ -272,4 +285,30 @@ void WriteResourceTable(const ParsedResourceTable& table, std::ostream& output, 
 			output << " " << tab << "DataEntry.Reserved " << entry.DataEntry.Reserved << std::endl;
 		}
 	}
+}
+
+void WriteBaseRelocations(const RelocationsDirectoryParser& parser, std::ostream& output)
+{
+	const std::vector<ParsedRelocationChunk>& chunks = parser.GetRelocationChunks();
+
+	const std::ios_base::fmtflags oldFlags = output.flags();
+
+	output << "Base Relocations. Number of chunks is " << chunks.size() << std::endl;
+
+	output << std::left << std::setfill(' ');
+	output << std::hex << std::uppercase;
+	
+	output << std::setw(15) << "VirtualAddress" << " ";
+
+	output << std::dec;
+	output << std::left << std::setfill(' ');
+	output << std::setw(15) << "NumberOfRelocations" << std::endl;
+
+	for each (const ParsedRelocationChunk& chunk in chunks)
+	{
+		output << std::setw(15) << chunk.VirtualAddress;
+		output << std::setw(15) << chunk.Relocations.size() << std::endl;
+	}
+
+	output.flags(oldFlags);
 }

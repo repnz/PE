@@ -149,6 +149,7 @@
     <ClCompile Include="ExportDirectoryParser.cpp" />
     <ClCompile Include="PEParser.cpp" />
     <ClCompile Include="ImportDirectoryParser.cpp" />
+    <ClCompile Include="RelocationsDirectoryParser.cpp" />
     <ClCompile Include="ResourceDirectoryParser.cpp" />
     <ClCompile Include="StreamParser.cpp" />
   </ItemGroup>
@@ -180,6 +181,7 @@
     <ClInclude Include="Headers\SectionHeader.h" />
     <ClInclude Include="Headers\Directories\ExportTable.h" />
     <ClInclude Include="ImportDirectoryParser.h" />
+    <ClInclude Include="RelocationsDirectoryParser.h" />
     <ClInclude Include="ResourceDirectoryParser.h" />
     <ClInclude Include="StreamParser.h" />
     <ClInclude Include="PEParser.h" />

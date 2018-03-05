@@ -29,12 +29,15 @@ public:
 	T Read();
 
 	template <typename T>
+	void ReadVector(std::vector<T>& v);
+
+	template <typename T>
 	std::vector<T> ReadVector(const std::size_t count);
 
 	template <typename T>
 	std::vector<T> ReadVector(const std::size_t count, const std::strstream::pos_type pos);
 
-	void Move(const int value);
+	void Move(const std::strstream::pos_type value);
 
 	template <typename T>
 	void ReadVector(std::vector<T>& v, const std::strstream::pos_type pos, const std::size_t count);
@@ -113,6 +116,17 @@ std::vector<T> StreamParser::ReadVector(const std::size_t count)
 	return v;
 }
 
+
+template <typename T>
+void StreamParser::ReadVector(std::vector<T>& v)
+{
+	if (v.size() == 0)
+	{
+		return;
+	}
+
+	Read<T>(v.data(), v.size() * sizeof(T));
+}
 
 template <typename T>
 void StreamParser::ReadVector(std::vector<T>& v, const std::size_t count)
