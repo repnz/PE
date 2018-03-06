@@ -13,6 +13,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include "PE.Parser/DebugDirectoryParser.h"
 
 
 using namespace Headers;
@@ -24,6 +25,7 @@ void WriteExports(const ExportDirectoryParser& parser, std::ostream& output);
 void WriteImports(const ImportDirectoryParser& parser, std::ostream& output);
 void WriteResourceTable(const ParsedResourceTable& table, std::ostream& output, std::string tab = " ");
 void WriteBaseRelocations(const RelocationsDirectoryParser& parser, std::ostream& output);
+void WriteDebugEntries(const DebugDirectoryParser& parser, std::ostream& output);
 
 int main(const int argc, const char** argv)
 {
@@ -120,6 +122,14 @@ int main(const int argc, const char** argv)
 		WriteBaseRelocations(relocParser, std::cout);
 	}
 
+	if (argsParser.cmdOptionExists("--debug"))
+	{
+		DebugDirectoryParser debugParser(peParser);
+		debugParser.Load();
+
+		WriteDebugEntries(debugParser, std::cout);
+	}
+
 	return 0;
 }
 
@@ -135,6 +145,7 @@ void WriteHelp(std::ostream& output)
 	output << " Print All Imports: --imports" << std::endl;
 	output << " Print All Exports: --exports" << std::endl;
 	output << "Print All Base Relocations: --base-reloc" << std::endl;
+	output << "Print All Debug Information: --debug" << std::endl;
 }
 
 void WriteDataDirectories(const PEParser& parser, std::ostream& output)
@@ -311,4 +322,23 @@ void WriteBaseRelocations(const RelocationsDirectoryParser& parser, std::ostream
 	}
 
 	output.flags(oldFlags);
+}
+
+void WriteDebugEntries(const DebugDirectoryParser& parser, std::ostream& output)
+{
+	output << "Debug Directory Information" << std::endl;
+	output << std::hex;
+
+	for each (DebugDirectoryEntry entry in parser.GetDebugEntries())
+	{
+		output << "Characteristics " << entry.Characteristics << std::endl;
+		output << "TimeDateStamp " << entry.TimeDateStamp << std::endl;
+		output << "MajorVersion " << entry.MajorVersion << std::endl;
+		output << "MinorVersion " << entry.MinorVersion << std::endl;
+		output << "Type " << entry.Type << std::endl;
+		output << "SizeOfData " << entry.SizeOfData << std::endl;
+		output << "AddressOfRawData " << entry.AddressOfRawData << std::endl;
+		output << "AddressOfRawData " << entry.AddressOfRawData << std::endl;
+		output << std::endl;
+	}
 }
