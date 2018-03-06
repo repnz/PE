@@ -7,14 +7,13 @@
 #include <PE.Parser/ResourceDirectoryParser.h>
 #include <PE.Parser/RelocationsDirectoryParser.h>
 #include <PE.Dumper/ArgumentsParser.h>
+#include <PE.Parser/DebugDirectoryParser.h>
 
 #include <fstream>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <iomanip>
-#include "PE.Parser/DebugDirectoryParser.h"
-
 
 using namespace Headers;
 
