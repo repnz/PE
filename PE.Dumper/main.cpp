@@ -26,6 +26,7 @@ void WriteImports(const ImportDirectoryParser& parser, std::ostream& output);
 void WriteResourceTable(const ParsedResourceTable& table, std::ostream& output, std::string tab = " ");
 void WriteBaseRelocations(const RelocationsDirectoryParser& parser, std::ostream& output);
 void WriteDebugEntries(const DebugDirectoryParser& parser, std::ostream& output);
+void WriteDosHeader(const DosHeader& dos_header, std::ostream& out);
 
 int main(const int argc, const char** argv)
 {
@@ -61,6 +62,11 @@ int main(const int argc, const char** argv)
 	
 	PEParser peParser(peFile);
 	peParser.Load();
+
+	if (argsParser.cmdOptionExists("--dos-header"))
+	{
+		WriteDosHeader(peParser.GetDosHeader(), std::cout);
+	}
 
 	if (argsParser.cmdOptionExists("--pe-header"))
 	{
@@ -361,4 +367,29 @@ void WriteDebugEntries(const DebugDirectoryParser& parser, std::ostream& output)
 		output << "AddressOfRawData " << entry.AddressOfRawData << std::endl;
 		output << std::endl;
 	}
+}
+
+void WriteDosHeader(const DosHeader& dosHeader, std::ostream& output)
+{
+	output << std::hex;
+	output << "PE File Dos Header: " << std::endl;
+	output << "Magic " << dosHeader.Magic << std::endl;
+	output << "LastSize " << dosHeader.LastSize << std::endl;
+	output << "BlocksNumber " << dosHeader.BlocksNumber << std::endl;
+	output << "RelocationsNumber " << dosHeader.RelocationsNumber << std::endl;
+	output << "HeaderSize " << dosHeader.HeaderSize << std::endl;
+	output << "MinimumExtraParagraphs " << dosHeader.MinimumExtraParagraphs << std::endl;
+	output << "MaximumExtraParagraphs " << dosHeader.MaximumExtraParagraphs << std::endl;
+	output << "InitialStackSegment " << dosHeader.InitialStackSegment << std::endl;
+	output << "InitialStackPointer " << dosHeader.InitialStackPointer << std::endl;
+	output << "Checksum " << dosHeader.Checksum << std::endl;
+	output << "InitialIPValue " << dosHeader.InitialIPValue << std::endl;
+	output << "InitialCodeSegment " << dosHeader.InitialCodeSegment << std::endl;
+	output << "RelocationTableFileAddress " << dosHeader.RelocationTableFileAddress << std::endl;
+	output << "OverlayNumber " << dosHeader.OverlayNumber << std::endl;
+	output << "OEMIdentifier " << dosHeader.OEMIdentifier << std::endl;
+	output << "OEMInfo " << dosHeader.OEMInfo << std::endl;
+	output << "Reserved2 " << dosHeader.Reserved2 << std::endl;
+	output << "NewExeHeaderFilePointer " << dosHeader.NewExeHeaderFilePointer << std::endl;
+
 }
