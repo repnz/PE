@@ -17,6 +17,7 @@
 
 using namespace Headers;
 
+void WritePEHeaders(const PEParser& parser, std::ostream& output);
 void WriteHelp(std::ostream& output);
 void WriteDataDirectories(const PEParser& parser, std::ostream& output);
 void WriteSectionHeaders(const PEParser& parser, std::ostream& output);
@@ -60,6 +61,11 @@ int main(const int argc, const char** argv)
 	
 	PEParser peParser(peFile);
 	peParser.Load();
+
+	if (argsParser.cmdOptionExists("--pe-header"))
+	{
+		WritePEHeaders(peParser, std::cout);
+	}
 
 	if (argsParser.cmdOptionExists("--sections"))
 	{
@@ -130,6 +136,21 @@ int main(const int argc, const char** argv)
 	}
 
 	return 0;
+}
+
+void WritePEHeaders(const PEParser& parser, std::ostream& output)
+{
+	const Headers::PEHeader& peHeader = parser.GetPEHeader();
+	output << std::hex;
+	
+	output << "FileSignature " << peHeader.FileSignature << std::endl;
+	output << "CoffHeader.Machine " << peHeader.CoffHeader.Machine << std::endl;
+	output << "CoffHeader.NumberOfSections " << peHeader.CoffHeader.NumberOfSections << std::endl;
+	output << "CoffHeader.TimeDateStamp " << peHeader.CoffHeader.TimeDateStamp << std::endl;
+	output << "CoffHeader.PointerToSymbolTable " << peHeader.CoffHeader.PointerToSymbolTable << std::endl;
+	output << "CoffHeader.NumberOfSymbols " << peHeader.CoffHeader.NumberOfSymbols << std::endl;
+	output << "CoffHeader.SizeOfOptionalHeader " << peHeader.CoffHeader.SizeOfOptionalHeader << std::endl;
+	output << "CoffHeader.Characteristics " << peHeader.CoffHeader.Characteristics << std::endl;
 }
 
 void WriteHelp(std::ostream& output)
