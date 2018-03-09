@@ -55,7 +55,7 @@ void DebugDirectoryParser::Impl::Load()
 	
 	_streamParser.Seek(debugEntriesFilePointer);
 
-	for (int i=0; i<numberOfEntries; ++i)
+	for (uint32_t i=0; i<numberOfEntries; ++i)
 	{
 		_streamParser.Read<DebugDirectoryEntry>(&_entries[i]);
 	}
